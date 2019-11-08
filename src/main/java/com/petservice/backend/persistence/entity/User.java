@@ -20,7 +20,7 @@ public class User implements Serializable {
     @Column(nullable = false, length = 30)
     private String name;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "avatar")
     private Image avatar;
 
@@ -30,14 +30,14 @@ public class User implements Serializable {
     @Column(nullable = false, length = 30)
     private String phone;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "city_id")
     private City city;
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private Boolean activePetsitter;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_animal",
             joinColumns = {@JoinColumn(name = "user_id")},
@@ -50,10 +50,10 @@ public class User implements Serializable {
 
     private String description;
 
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     private Set<Feedback> clientFeedback;
 
-    @OneToMany(mappedBy = "petsitter")
+    @OneToMany(mappedBy = "petsitter", fetch = FetchType.LAZY)
     private Set<Feedback> petsitterFeedback;
 
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
