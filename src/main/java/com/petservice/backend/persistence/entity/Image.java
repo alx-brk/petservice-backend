@@ -3,10 +3,11 @@ package com.petservice.backend.persistence.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Data
-public class Image {
+public class Image implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -17,12 +18,4 @@ public class Image {
 
     @Lob
     private byte[] picture;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "petsitter_id")
-    private Petsitter petsitter;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "job_id")
-    private Job job;
 }

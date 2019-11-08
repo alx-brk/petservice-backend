@@ -1,12 +1,11 @@
-package com.petservice.backend.model;
+package com.petservice.backend.model.dto;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode
-public class CityDto {
-
+public class AnimalDto {
     private Long id;
-    private String city;
+    private String name;
 }

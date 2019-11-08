@@ -2,8 +2,8 @@ package com.petservice.backend.persistence.repository;
 
 import com.petservice.backend.persistence.entity.User;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.stereotype.Repository;
 
-@NoRepositoryBean
-public interface UserBaseRepository<T extends User> extends CrudRepository<T, Long> {
+@Repository
+public interface UserRepository extends CrudRepository<User, Long> {
 }

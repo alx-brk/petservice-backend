@@ -1,33 +1,34 @@
 package com.petservice.backend.persistence.entity;
 
-import com.petservice.backend.persistence.enums.Status;
+import com.petservice.backend.persistence.enums.JobStatus;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
 @Data
-public class Job {
+public class Job implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(nullable = false)
-    private String title;
-
-    @Column
-    private String description;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "client", nullable = false)
+    private User client;
 
     @ManyToOne
-    @JoinColumn(name = "city_id", nullable = false)
-    private City city;
+    @JoinColumn(name = "petsitter")
+    private User petsitter;
 
-    @ManyToMany(
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.REFRESH
-    )
+    @Column(nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    private JobStatus jobStatus;
+
+    @ManyToMany
     @JoinTable(
             name = "job_animal",
             joinColumns = {@JoinColumn(name = "job_id")},
@@ -35,34 +36,22 @@ public class Job {
     )
     private Set<Animal> animals;
 
-    @ManyToMany(
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.REFRESH
-    )
+    @ManyToMany
     @JoinTable(
             name = "job_service",
             joinColumns = {@JoinColumn(name = "job_id")},
-            inverseJoinColumns = {@JoinColumn(name = "service_id")}
+            inverseJoinColumns = {@JoinColumn(name = "pet_service_id")}
     )
-    private Set<Service> services;
+    private Set<PetService> petServices;
 
-    @OneToMany(
-            mappedBy = "job",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
-            orphanRemoval = true
-    )
-    private Set<Image> images;
+    private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "client_id")
-    private Client client;
+    @Column
+    private LocalDate startDate;
 
-    @ManyToOne
-    @JoinColumn(name = "petsitter_id")
-    private Petsitter petsitter;
+    @Column
+    private LocalDate endDate;
 
     @Column(nullable = false)
-    private Status status;
-
+    private LocalDate creationDate;
 }
