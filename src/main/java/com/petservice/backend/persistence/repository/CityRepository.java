@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CityRepository extends CrudRepository<City, Long> {
+
+    City findByNameEquals(String name);
 }

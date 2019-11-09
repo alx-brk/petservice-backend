@@ -12,10 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 @EntityScan(
         basePackageClasses = {BackendApplication.class, Jsr310JpaConverters.class}
 )
-@ComponentScan(
-        basePackages = { "com.petservice.backend.controllers" },
-        excludeFilters = { @ComponentScan.Filter(value = Controller.class, type = FilterType.ANNOTATION)}
-)
 @SpringBootApplication
 public class BackendApplication {
 

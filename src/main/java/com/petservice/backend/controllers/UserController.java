@@ -1,6 +1,6 @@
 package com.petservice.backend.controllers;
 
-import com.petservice.backend.persistence.entity.PetsitterFilterOptions;
+import com.petservice.backend.model.dto.PetsitterFilterOptions;
 import com.petservice.backend.model.dto.UserDto;
 import com.petservice.backend.services.UserService;
 import io.swagger.annotations.Api;
@@ -22,14 +22,21 @@ public class UserController {
 
     @GetMapping
     @ApiOperation(value = "get user")
-    public ResponseEntity<UserDto> getOne(@RequestParam Long id,
-                                          @RequestParam String email) {
+    public ResponseEntity<UserDto> getOne(@RequestParam(value = "id", required = false) Long id,
+                                          @RequestParam(value = "email", required = false) String email) {
         return new ResponseEntity<>(userService.getOneByIdOrEmail(id, email), HttpStatus.OK);
     }
 
-    @GetMapping
+    @GetMapping("/search")
     @ApiOperation(value = "get filtered list of petsitters")
     public ResponseEntity<List<UserDto>> getByFilterOptions(@RequestBody PetsitterFilterOptions petsitterFilterOptions) {
         return new ResponseEntity<>(userService.getFilteredPetsittersList(petsitterFilterOptions), HttpStatus.OK);
+    }
+
+    @PutMapping
+    @ApiOperation(value = "update user")
+    public ResponseEntity<HttpStatus> updateUser(@RequestBody UserDto userDto) {
+        userService.updateUser(userDto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

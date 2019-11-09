@@ -11,6 +11,7 @@ import java.util.Set;
 @EqualsAndHashCode
 public class JobDto {
     private Long id;
+    private CityDto city;
     private UserDto client;
     private UserDto petsitter;
     private JobStatus jobStatus;

@@ -1,4 +1,4 @@
-package com.petservice.backend.persistence.entity;
+package com.petservice.backend.model.dto;
 
 import com.petservice.backend.persistence.entity.Animal;
 import com.petservice.backend.persistence.entity.City;

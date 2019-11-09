@@ -1,6 +1,6 @@
 package com.petservice.backend.services;
 
-import com.petservice.backend.persistence.entity.PetsitterFilterOptions;
+import com.petservice.backend.model.dto.PetsitterFilterOptions;
 import com.petservice.backend.model.dto.UserDto;
 import com.petservice.backend.model.mappers.UserMapper;
 import com.petservice.backend.persistence.entity.User;
@@ -8,6 +8,7 @@ import com.petservice.backend.persistence.repository.UserRepository;
 import com.petservice.backend.services.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -50,5 +51,10 @@ public class UserService {
                         petsitterFilterOptions.getServices()
                 )
         );
+    }
+
+    @Transactional
+    public void updateUser(UserDto userDto){
+        userRepository.save(userMapper.toUser(userDto));
     }
 }

@@ -34,7 +34,7 @@ public class User implements Serializable {
     @JoinColumn(name = "city_id")
     private City city;
 
-    @Column(nullable = false, columnDefinition = "boolean default false")
+    @Column(nullable = false)
     private Boolean activePetsitter;
 
     @ManyToMany(fetch = FetchType.LAZY)

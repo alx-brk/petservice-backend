@@ -17,6 +17,10 @@ public class Job implements Serializable {
     private Long id;
 
     @ManyToOne(optional = false)
+    @JoinColumn(name = "city", nullable = false)
+    private City city;
+
+    @ManyToOne(optional = false)
     @JoinColumn(name = "client", nullable = false)
     private User client;
 

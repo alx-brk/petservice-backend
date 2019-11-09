@@ -19,11 +19,13 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
     User findByIdEqualsOrEmailEquals(Long id, String email);
 
-    @Query("select us from User us " +
-            "inner join Catalog ca " +
-            "on us.catalogSet = ca " +
-            "where us.city = :city and us.rating >= :rating and us.animals in :animals and ca.petService in :services " +
-            "order by us.rating desc ")
+    @Query("select u from User u " +
+            "inner join u.catalogSet cs " +
+            "where u.city = :city " +
+            "and u.rating >= :rating " +
+            "and u.animals in :animals " +
+            "and cs.petService in :services " +
+            "order by u.rating desc ")
     List<User> findByFilterOptions(@Param(value = "city") City city,
                                    @Param(value = "rating")Double rating,
                                    @Param(value = "animals")Set<Animal> animals,
