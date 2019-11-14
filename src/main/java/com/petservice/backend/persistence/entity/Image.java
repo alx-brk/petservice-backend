@@ -13,6 +13,8 @@ public class Image implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private String fileName;
+
     @Column(nullable = false)
     private String type;
 

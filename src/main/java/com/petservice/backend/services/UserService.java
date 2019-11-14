@@ -6,6 +6,7 @@ import com.petservice.backend.model.mappers.UserMapper;
 import com.petservice.backend.persistence.entity.User;
 import com.petservice.backend.persistence.repository.UserRepository;
 import com.petservice.backend.services.exceptions.NotFoundException;
+import com.petservice.backend.services.validation.UserValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,11 +20,15 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private UserValidation userValidation;
+
+    @Autowired
     private UserMapper userMapper;
 
     public UserDto getOneById(Long id) {
         return userMapper.toUserDto(
-                userRepository.findById(id).orElseThrow(() -> NotFoundException.builder()
+                userRepository.findById(id)
+                        .orElseThrow(() -> NotFoundException.builder()
                         .entity(User.class)
                         .object(id)
                         .build())
@@ -55,6 +60,7 @@ public class UserService {
 
     @Transactional
     public void updateUser(UserDto userDto){
+        userValidation.validateOnUpdate(userDto);
         userRepository.save(userMapper.toUser(userDto));
     }
 }

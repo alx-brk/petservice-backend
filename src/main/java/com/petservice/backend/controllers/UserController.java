@@ -39,4 +39,11 @@ public class UserController {
         userService.updateUser(userDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PostMapping
+    @ApiOperation(value = "create user")
+    public ResponseEntity<HttpStatus> create(@RequestBody UserDto userDto) {
+        userService.updateUser(userDto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
