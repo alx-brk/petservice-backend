@@ -1,5 +1,8 @@
 package com.petservice.backend.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -20,7 +23,7 @@ public class User implements Serializable {
     @Column(nullable = false, length = 30)
     private String name;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "avatar")
     private Image avatar;
 

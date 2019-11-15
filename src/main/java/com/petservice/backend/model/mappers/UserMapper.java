@@ -3,6 +3,7 @@ package com.petservice.backend.model.mappers;
 import com.petservice.backend.model.dto.UserDto;
 import com.petservice.backend.persistence.entity.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 import java.util.Set;
@@ -12,6 +13,7 @@ public interface UserMapper {
 
     User toUser(UserDto userDto);
 
+    @Mapping(target = "avatar.picture", ignore = true)
     UserDto toUserDto(User user);
 
     Set<User> toUserSet(Set<UserDto> userDtoSet);

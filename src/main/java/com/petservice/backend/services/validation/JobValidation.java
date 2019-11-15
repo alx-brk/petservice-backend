@@ -13,19 +13,12 @@ public class JobValidation implements Validation<JobDto> {
 
     @Override
     public void validateOnCreate(JobDto entity) {
-
+        validateCommon(entity);
     }
 
     @Override
     public void validateOnUpdate(JobDto entity) {
         Validator.of(entity)
-                .validateNotNull(
-                        (e) -> e,
-                        ValidationException.builder()
-                                .entity(JobDto.class)
-                                .object(entity)
-                                .message(CANNOT_BE_NULL_ERROR).build()
-                )
                 .validateNotNull(
                         JobDto::getId,
                         ValidationException.builder()
@@ -33,6 +26,37 @@ public class JobValidation implements Validation<JobDto> {
                                 .object(entity)
                                 .message(CANNOT_BE_NULL_ERROR)
                                 .field("id").build()
+                );
+
+        validateCommon(entity);
+    }
+
+    private void validateDates(JobDto entity) {
+        if (entity.getStartDate().isBefore(entity.getCreationDate())) {
+            throw ValidationException.builder()
+                    .entity(JobDto.class)
+                    .object(entity)
+                    .message(START_DATE_ERROR)
+                    .field("startDate").build();
+        }
+
+        if (entity.getEndDate().isBefore(entity.getStartDate())) {
+            throw ValidationException.builder()
+                    .entity(JobDto.class)
+                    .object(entity)
+                    .message(END_DATE_ERROR)
+                    .field("endDate").build();
+        }
+    }
+
+    private void validateCommon(JobDto entity) {
+        Validator.of(entity)
+                .validateNotNull(
+                        (e) -> e,
+                        ValidationException.builder()
+                                .entity(JobDto.class)
+                                .object(entity)
+                                .message(CANNOT_BE_NULL_ERROR).build()
                 )
                 .validateNotNull(
                         JobDto::getCity,
@@ -76,23 +100,5 @@ public class JobValidation implements Validation<JobDto> {
                 );
 
         validateDates(entity);
-    }
-
-    private void validateDates(JobDto entity) {
-        if (entity.getStartDate().isBefore(entity.getCreationDate())) {
-            throw ValidationException.builder()
-                    .entity(JobDto.class)
-                    .object(entity)
-                    .message(START_DATE_ERROR)
-                    .field("startDate").build();
-        }
-
-        if (entity.getEndDate().isBefore(entity.getStartDate())) {
-            throw ValidationException.builder()
-                    .entity(JobDto.class)
-                    .object(entity)
-                    .message(END_DATE_ERROR)
-                    .field("endDate").build();
-        }
     }
 }

@@ -2,6 +2,7 @@ package com.petservice.backend.controllers;
 
 import com.petservice.backend.model.dto.JobDto;
 import com.petservice.backend.model.dto.JobFilterOptions;
+import com.petservice.backend.persistence.enums.Units;
 import com.petservice.backend.services.JobService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,5 +32,18 @@ public class JobController {
     public ResponseEntity<HttpStatus> update(@RequestBody JobDto jobDto) {
         jobService.update(jobDto);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping
+    @ApiOperation(value = "create job")
+    public ResponseEntity<HttpStatus> create(@RequestBody JobDto jobDto) {
+        jobService.create(jobDto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/units/all")
+    @ApiOperation(value = "get all units")
+    public ResponseEntity<List<Units>> getUnits() {
+        return new ResponseEntity<>(jobService.getUnits(), HttpStatus.OK);
     }
 }
