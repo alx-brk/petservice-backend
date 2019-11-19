@@ -2,7 +2,9 @@ package com.petservice.backend.services;
 
 import com.petservice.backend.model.dto.ImageDto;
 import com.petservice.backend.persistence.entity.Image;
+import com.petservice.backend.persistence.entity.User;
 import com.petservice.backend.persistence.repository.ImageRepository;
+import com.petservice.backend.persistence.repository.UserRepository;
 import com.petservice.backend.services.exceptions.FileUploadException;
 import com.petservice.backend.services.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +21,11 @@ public class ImageService {
     @Autowired
     private ImageRepository imageRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Transactional
-    public Image storeFile(MultipartFile file) {
+    public Image storeFile(Long userId, MultipartFile file) {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         Image image = new Image();
 
@@ -39,8 +44,15 @@ public class ImageService {
             image.setPicture(file.getBytes());
 
             image = imageRepository.save(image);
+            User user = userRepository.findById(userId).orElseThrow(() -> NotFoundException.builder()
+                    .entity(User.class)
+                    .object(userId)
+                    .build());
+            
+            user.setAvatar(image);
+            userRepository.save(user);
             return image;
-        } catch (IOException e){
+        } catch (IOException e) {
             throw FileUploadException.builder()
                     .entity(Image.class)
                     .object(image)
@@ -53,8 +65,8 @@ public class ImageService {
     public Image getFile(Long id) {
         return imageRepository.findById(id)
                 .orElseThrow(() -> NotFoundException.builder()
-                .entity(Image.class)
-                .object(id)
-                .build());
+                        .entity(Image.class)
+                        .object(id)
+                        .build());
     }
 }

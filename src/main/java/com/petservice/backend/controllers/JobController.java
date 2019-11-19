@@ -2,8 +2,10 @@ package com.petservice.backend.controllers;
 
 import com.petservice.backend.model.dto.JobDto;
 import com.petservice.backend.model.dto.JobFilterOptions;
+import com.petservice.backend.model.dto.UserDto;
 import com.petservice.backend.persistence.enums.Units;
 import com.petservice.backend.services.JobService;
+import com.sun.xml.internal.bind.v2.TODO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,5 +47,17 @@ public class JobController {
     @ApiOperation(value = "get all units")
     public ResponseEntity<List<Units>> getUnits() {
         return new ResponseEntity<>(jobService.getUnits(), HttpStatus.OK);
+    }
+
+    @GetMapping("/client-orders")
+    @ApiOperation(value = "get all client orders")
+    public ResponseEntity<List<JobDto>> getClientJobs(@RequestParam(value = "id") Long id) {
+        return new ResponseEntity<>(jobService.getClientJobs(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/petsitter-orders")
+    @ApiOperation(value = "get all petsitter orders")
+    public ResponseEntity<List<JobDto>> getPetsitterJobs(@RequestParam(value = "id") Long id) {
+        return new ResponseEntity<>(jobService.getPetsitterJobs(id), HttpStatus.OK);
     }
 }

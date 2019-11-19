@@ -16,13 +16,4 @@ public class PetService implements Serializable {
 
     @Column(nullable = false, unique = true, length = 30)
     private String name;
-
-    @OneToMany(mappedBy = "petService", fetch = FetchType.LAZY)
-    private Set<Catalog> catalogSet;
-
-    @ManyToMany(
-            mappedBy = "petServices",
-            fetch = FetchType.LAZY
-    )
-    private Set<Job> jobs;
 }

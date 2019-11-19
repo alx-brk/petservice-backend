@@ -16,10 +16,4 @@ public class Animal implements Serializable {
 
     @Column(nullable = false, unique = true, length = 20)
     private String name;
-
-    @ManyToMany(
-            mappedBy = "animals",
-            fetch = FetchType.LAZY
-    )
-    private Set<Job> jobs;
 }

@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AnimalRepository extends CrudRepository<Animal, Long> {
 
+    Animal findByNameEquals(String name);
 
 }

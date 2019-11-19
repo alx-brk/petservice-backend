@@ -1,9 +1,6 @@
 package com.petservice.backend.persistence.repository;
 
-import com.petservice.backend.persistence.entity.Animal;
-import com.petservice.backend.persistence.entity.City;
-import com.petservice.backend.persistence.entity.Job;
-import com.petservice.backend.persistence.entity.PetService;
+import com.petservice.backend.persistence.entity.*;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -30,4 +27,16 @@ public interface JobRepository extends CrudRepository<Job, Long> {
                                   @Param(value = "start")LocalDate startDate,
                                   @Param(value = "end")LocalDate endDate,
                                   @Param(value = "create")LocalDate creationDate);
+
+    @Query("select job from Job job " +
+            "inner join job.client client " +
+            "where client.id = :id " +
+            "order by job.jobStatus desc, job.creationDate desc ")
+    List<Job> findAllClientJobs(@Param(value = "id") Long id);
+
+    @Query("select job from Job job " +
+            "inner join job.petsitter petsitter " +
+            "where petsitter.id = :id " +
+            "order by job.creationDate desc ")
+    List<Job> findAllPetsitterJobs(@Param(value = "id") Long id);
 }

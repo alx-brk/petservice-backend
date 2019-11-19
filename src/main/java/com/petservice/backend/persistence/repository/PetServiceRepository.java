@@ -12,4 +12,6 @@ public interface PetServiceRepository extends CrudRepository<PetService, Long> {
 
     @Query("select ps from PetService ps")
     Set<PetService> findAll();
+
+    PetService findByNameEquals(String name);
 }

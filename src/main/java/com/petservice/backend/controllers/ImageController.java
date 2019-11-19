@@ -29,7 +29,10 @@ public class ImageController {
     )
     @ApiOperation(value = "upload image")
     public ResponseEntity<Image> uploadFile(@PathVariable Long id, @RequestPart(name = "file") MultipartFile file) {
-        return new ResponseEntity<>(imageService.storeFile(file), HttpStatus.OK);
+        Image image = imageService.storeFile(id, file);
+        image.setPicture(null);
+        image.setFileName(null);
+        return new ResponseEntity<>(image, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
