@@ -14,4 +14,6 @@ public interface PetServiceRepository extends CrudRepository<PetService, Long> {
     Set<PetService> findAll();
 
     PetService findByNameEquals(String name);
+
+    Set<PetService> findAllByNameIn(Set<String> names);
 }

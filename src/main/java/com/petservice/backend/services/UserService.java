@@ -1,17 +1,24 @@
 package com.petservice.backend.services;
 
+import com.petservice.backend.model.dto.CatalogDto;
 import com.petservice.backend.model.dto.PetsitterFilterOptions;
 import com.petservice.backend.model.dto.UserDto;
+import com.petservice.backend.model.mappers.CatalogMapper;
 import com.petservice.backend.model.mappers.UserMapper;
-import com.petservice.backend.persistence.entity.User;
-import com.petservice.backend.persistence.repository.UserRepository;
+import com.petservice.backend.persistence.entity.*;
+import com.petservice.backend.persistence.repository.*;
+import com.petservice.backend.services.common.ServiceUtils;
 import com.petservice.backend.services.exceptions.NotFoundException;
+import com.petservice.backend.services.validation.CatalogValidation;
 import com.petservice.backend.services.validation.UserValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -20,26 +27,22 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private ServiceUtils serviceUtils;
+
+    @Autowired
     private UserValidation userValidation;
 
     @Autowired
+    private CatalogRepository catalogRepository;
+
+    @Autowired
+    private CatalogValidation catalogValidation;
+
+    @Autowired
+    private CatalogMapper catalogMapper;
+
+    @Autowired
     private UserMapper userMapper;
-
-    public UserDto getOneById(Long id) {
-        return userMapper.toUserDto(
-                userRepository.findById(id)
-                        .orElseThrow(() -> NotFoundException.builder()
-                        .entity(User.class)
-                        .object(id)
-                        .build())
-        );
-    }
-
-    public UserDto getOneByEmail(String email) {
-        return userMapper.toUserDto(
-                userRepository.findByEmailEquals(email)
-        );
-    }
 
     public UserDto getOneByIdOrEmail(Long id, String email) {
         return userMapper.toUserDto(
@@ -47,20 +50,52 @@ public class UserService {
         );
     }
 
-    public List<UserDto> getFilteredPetsittersList(PetsitterFilterOptions petsitterFilterOptions) {
-        return userMapper.toUserDtoList(
-                userRepository.findByFilterOptions(
-                        petsitterFilterOptions.getCity(),
-                        petsitterFilterOptions.getRating(),
-                        petsitterFilterOptions.getAnimals(),
-                        petsitterFilterOptions.getServices()
-                )
-        );
+    public List<UserDto> getFilteredPetsittersList(PetsitterFilterOptions filterOptions) {
+        List<User> users;
+
+        if (filterOptions.isEmpty()) {
+            users = userRepository.findAllByActivePetsitterIsTrueOrderByRatingDesc();
+        } else if (serviceUtils.hasItems(filterOptions.getAnimals()) && serviceUtils.hasItems(filterOptions.getServices())) {
+            users = userRepository.findByFilterOptions(
+                    Optional.ofNullable(filterOptions.getCity()).map(City::getName).orElse(null),
+                    filterOptions.getRating(),
+                    serviceUtils.getAnimalsAsString(filterOptions.getAnimals()),
+                    serviceUtils.getServicesAsString(filterOptions.getServices())
+            );
+        } else if (serviceUtils.hasItems(filterOptions.getAnimals())) {
+            users = userRepository.findByFilterOptionsWithAnimals(
+                    Optional.ofNullable(filterOptions.getCity()).map(City::getName).orElse(null),
+                    filterOptions.getRating(),
+                    serviceUtils.getAnimalsAsString(filterOptions.getAnimals())
+            );
+        } else if (serviceUtils.hasItems(filterOptions.getServices())){
+            users = userRepository.findByFilterOptionsWithServices(
+                    Optional.ofNullable(filterOptions.getCity()).map(City::getName).orElse(null),
+                    filterOptions.getRating(),
+                    serviceUtils.getServicesAsString(filterOptions.getServices())
+            );
+        } else {
+            users = userRepository.findByFilterOptions(
+                    Optional.ofNullable(filterOptions.getCity()).map(City::getName).orElse(null),
+                    filterOptions.getRating()
+            );
+        }
+
+        return userMapper.toUserDtoList(users);
     }
 
     @Transactional
-    public void updateUser(UserDto userDto){
+    public void updateUser(UserDto userDto) {
         userValidation.validateOnUpdate(userDto);
-        userRepository.save(userMapper.toUser(userDto));
+        catalogValidation.validateOnUpdate(userDto.getCatalogSet());
+        User user = userRepository.save(userMapper.toUser(userDto));
+        updateCatalog(user, userDto.getCatalogSet());
+    }
+
+    private void updateCatalog(User user, Set<CatalogDto> catalogDtos){
+        Set<Catalog> catalogs = catalogMapper.toCatalogSet(catalogDtos);
+        catalogs.forEach(item -> item.setPetsitter(user));
+        catalogRepository.deleteAllByPetsitter(user);
+        catalogRepository.saveAll(catalogs);
     }
 }

@@ -35,6 +35,9 @@ public class DataLoader {
     @Autowired
     private JobRepository jobRepository;
 
+    @Autowired
+    private CatalogRepository catalogRepository;
+
     @Transactional
     @PostConstruct
     public void init() {
@@ -61,7 +64,7 @@ public class DataLoader {
         user1.setEmail("masha.pupkina@gmail.com");
         user1.setName("Маша Пупкина");
         user1.setPhone("+79047389265");
-        user1.setActivePetsitter(false);
+        user1.setActivePetsitter(true);
 
         City city1 = cityRepository.findByNameEquals("Санкт-Петербург");
         user1.setCity(city1);
@@ -75,7 +78,8 @@ public class DataLoader {
         catalog1.setPrice(500);
         catalog1.setUnits(Units.RUB);
         user1.setCatalogSet(Collections.singleton(catalog1));
-        userRepository.save(user1);
+        user1 = userRepository.save(user1);
+        catalog1 = catalogRepository.save(catalog1);
 
         User user2 = new User();
         user2.setEmail("vasya@gmail.com");
@@ -96,6 +100,7 @@ public class DataLoader {
         catalog2.setUnits(Units.RUB_DAY);
         user2.setCatalogSet(Collections.singleton(catalog2));
         userRepository.save(user2);
+        catalog2 = catalogRepository.save(catalog2);
 
         Job job1 = new Job();
         job1.setClient(user1);
@@ -111,6 +116,7 @@ public class DataLoader {
 
         Job job2 = new Job();
         job2.setClient(user2);
+        job2.setPetsitter(user1);
         job2.setCity(city2);
         job2.setAnimals(Collections.singleton(animal1));
         job2.setPetServices(Collections.singleton(catalog1.getPetService()));

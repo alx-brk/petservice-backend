@@ -1,5 +1,6 @@
 package com.petservice.backend.persistence.entity;
 
+import com.google.common.base.Objects;
 import com.petservice.backend.persistence.enums.JobStatus;
 import lombok.Data;
 
@@ -58,4 +59,26 @@ public class Job implements Serializable {
 
     @Column(nullable = false)
     private LocalDate creationDate;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Job)) return false;
+        Job job = (Job) o;
+        return Objects.equal(id, job.id) &&
+                Objects.equal(city, job.city) &&
+                Objects.equal(client, job.client) &&
+                Objects.equal(petsitter, job.petsitter) &&
+                Objects.equal(animals, job.animals) &&
+                Objects.equal(petServices, job.petServices) &&
+                Objects.equal(description, job.description) &&
+                Objects.equal(startDate, job.startDate) &&
+                Objects.equal(endDate, job.endDate) &&
+                Objects.equal(creationDate, job.creationDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id, city, client, petsitter, animals, petServices, description, startDate, endDate, creationDate);
+    }
 }

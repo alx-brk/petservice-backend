@@ -3,9 +3,11 @@ package com.petservice.backend.services;
 import com.petservice.backend.model.dto.JobDto;
 import com.petservice.backend.model.dto.JobFilterOptions;
 import com.petservice.backend.model.mappers.JobMapper;
-import com.petservice.backend.model.mappers.UserMapper;
+import com.petservice.backend.persistence.entity.City;
+import com.petservice.backend.persistence.entity.Job;
 import com.petservice.backend.persistence.enums.Units;
 import com.petservice.backend.persistence.repository.JobRepository;
+import com.petservice.backend.services.common.ServiceUtils;
 import com.petservice.backend.services.validation.JobValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class JobService {
@@ -21,25 +24,58 @@ public class JobService {
     private JobRepository jobRepository;
 
     @Autowired
+    private ServiceUtils serviceUtils;
+
+    @Autowired
     private JobValidation jobValidation;
 
     @Autowired
     private JobMapper jobMapper;
 
-    @Autowired
-    private UserMapper userMapper;
+    public List<JobDto> getByFilterOptions(JobFilterOptions filterOptions) {
+        List<Job> jobs;
 
-    public List<JobDto> getByFilterOptions(JobFilterOptions jobFilterOptions) {
-        return jobMapper.toJobDtoList(
-                jobRepository.findByFilterOptions(
-                        jobFilterOptions.getCity(),
-                        jobFilterOptions.getAnimals(),
-                        jobFilterOptions.getServices(),
-                        jobFilterOptions.getStartDate(),
-                        jobFilterOptions.getEndDate(),
-                        jobFilterOptions.getCreationDate()
-                )
-        );
+        if (filterOptions.isEmpty()) {
+            jobs = jobRepository.findAllByJobStatusEquals(filterOptions.getStatus());
+        } else if (serviceUtils.hasItems(filterOptions.getAnimals()) && serviceUtils.hasItems(filterOptions.getServices())) {
+            jobs = jobRepository.findByFilterOptions(
+                    filterOptions.getStatus(),
+                    Optional.ofNullable(filterOptions.getCity()).map(City::getName).orElse(null),
+                    filterOptions.getStartDate(),
+                    filterOptions.getEndDate(),
+                    filterOptions.getCreationDate(),
+                    serviceUtils.getAnimalsAsString(filterOptions.getAnimals()),
+                    serviceUtils.getServicesAsString(filterOptions.getServices())
+            );
+        } else if (serviceUtils.hasItems(filterOptions.getAnimals())) {
+            jobs = jobRepository.findByFilterOptionsWithAnimals(
+                    filterOptions.getStatus(),
+                    Optional.ofNullable(filterOptions.getCity()).map(City::getName).orElse(null),
+                    filterOptions.getStartDate(),
+                    filterOptions.getEndDate(),
+                    filterOptions.getCreationDate(),
+                    serviceUtils.getAnimalsAsString(filterOptions.getAnimals())
+            );
+        } else if (serviceUtils.hasItems(filterOptions.getServices())){
+            jobs = jobRepository.findByFilterOptionsWithAnimals(
+                    filterOptions.getStatus(),
+                    Optional.ofNullable(filterOptions.getCity()).map(City::getName).orElse(null),
+                    filterOptions.getStartDate(),
+                    filterOptions.getEndDate(),
+                    filterOptions.getCreationDate(),
+                    serviceUtils.getServicesAsString(filterOptions.getServices())
+            );
+        } else {
+            jobs = jobRepository.findByFilterOptions(
+                    filterOptions.getStatus(),
+                    Optional.ofNullable(filterOptions.getCity()).map(City::getName).orElse(null),
+                    filterOptions.getStartDate(),
+                    filterOptions.getEndDate(),
+                    filterOptions.getCreationDate()
+            );
+        }
+
+        return jobMapper.toJobDtoList(jobs);
     }
 
     public List<JobDto> getClientJobs(Long id) {

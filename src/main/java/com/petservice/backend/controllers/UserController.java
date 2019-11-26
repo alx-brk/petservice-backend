@@ -27,7 +27,7 @@ public class UserController {
         return new ResponseEntity<>(userService.getOneByIdOrEmail(id, email), HttpStatus.OK);
     }
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     @ApiOperation(value = "get filtered list of petsitters")
     public ResponseEntity<List<UserDto>> getByFilterOptions(@RequestBody PetsitterFilterOptions petsitterFilterOptions) {
         return new ResponseEntity<>(userService.getFilteredPetsittersList(petsitterFilterOptions), HttpStatus.OK);

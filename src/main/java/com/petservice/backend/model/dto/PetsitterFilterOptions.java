@@ -15,4 +15,15 @@ public class PetsitterFilterOptions {
     private Set<Animal> animals;
     private Set<PetService> services;
     private Double rating;
+
+    public boolean isEmpty() {
+        if (city == null &&
+                rating == null &&
+                (animals == null || animals.isEmpty()) &&
+                (services == null || services.isEmpty())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

@@ -1,6 +1,8 @@
 package com.petservice.backend.model.mappers;
 
+import com.petservice.backend.model.dto.CatalogDto;
 import com.petservice.backend.model.dto.UserDto;
+import com.petservice.backend.persistence.entity.Catalog;
 import com.petservice.backend.persistence.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -25,4 +27,7 @@ public interface UserMapper {
     List<UserDto> toUserDtoList(List<User> userList);
 
     Set<UserDto> toUserDtoSet(Iterable<User> userIterable);
+
+    @Mapping(target = "petsitter", ignore = true)
+    CatalogDto catalogToCatalogDto(Catalog catalog);
 }

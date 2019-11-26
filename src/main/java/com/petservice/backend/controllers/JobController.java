@@ -1,19 +1,19 @@
 package com.petservice.backend.controllers;
 
-import com.petservice.backend.model.dto.JobDto;
-import com.petservice.backend.model.dto.JobFilterOptions;
-import com.petservice.backend.model.dto.UserDto;
+import com.petservice.backend.model.dto.*;
 import com.petservice.backend.persistence.enums.Units;
 import com.petservice.backend.services.JobService;
-import com.sun.xml.internal.bind.v2.TODO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/job")
@@ -23,7 +23,7 @@ public class JobController {
     @Autowired
     private JobService jobService;
 
-    @GetMapping("/search")
+    @PostMapping(value = "/search")
     @ApiOperation(value = "get jobs by filter options")
     public ResponseEntity<List<JobDto>> getByFilterOptions(@RequestBody JobFilterOptions jobFilterOptions) {
         return new ResponseEntity<>(jobService.getByFilterOptions(jobFilterOptions), HttpStatus.OK);

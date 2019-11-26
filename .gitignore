@@ -28,3 +28,4 @@
 ### VS Code ###
 .vscode/
 /app.log
+*.gz
