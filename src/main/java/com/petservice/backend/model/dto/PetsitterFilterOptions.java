@@ -13,14 +13,14 @@ import java.util.Set;
 public class PetsitterFilterOptions {
     private City city;
     private Set<Animal> animals;
-    private Set<PetService> services;
+    private Set<PetService> petServices;
     private Double rating;
 
     public boolean isEmpty() {
         if (city == null &&
                 rating == null &&
                 (animals == null || animals.isEmpty()) &&
-                (services == null || services.isEmpty())) {
+                (petServices == null || petServices.isEmpty())) {
             return true;
         } else {
             return false;

@@ -7,17 +7,9 @@ import lombok.Data;
 import javax.persistence.*;
 import java.io.Serializable;
 
-@Entity
+@Embeddable
 @Data
 public class Catalog implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "petsitter_id")
-    private User petsitter;
 
     @ManyToOne
     @JoinColumn(name = "pet_servive_id")
@@ -35,15 +27,13 @@ public class Catalog implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Catalog)) return false;
         Catalog catalog = (Catalog) o;
-        return Objects.equal(id, catalog.id) &&
-                Objects.equal(petsitter, catalog.petsitter) &&
-                Objects.equal(petService, catalog.petService) &&
+        return Objects.equal(petService, catalog.petService) &&
                 Objects.equal(price, catalog.price) &&
                 units == catalog.units;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, petsitter, petService, price, units);
+        return Objects.hashCode(petService, price, units);
     }
 }

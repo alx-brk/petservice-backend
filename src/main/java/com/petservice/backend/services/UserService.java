@@ -1,6 +1,5 @@
 package com.petservice.backend.services;
 
-import com.petservice.backend.model.dto.CatalogDto;
 import com.petservice.backend.model.dto.PetsitterFilterOptions;
 import com.petservice.backend.model.dto.UserDto;
 import com.petservice.backend.model.mappers.CatalogMapper;
@@ -8,7 +7,6 @@ import com.petservice.backend.model.mappers.UserMapper;
 import com.petservice.backend.persistence.entity.*;
 import com.petservice.backend.persistence.repository.*;
 import com.petservice.backend.services.common.ServiceUtils;
-import com.petservice.backend.services.exceptions.NotFoundException;
 import com.petservice.backend.services.validation.CatalogValidation;
 import com.petservice.backend.services.validation.UserValidation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -31,9 +27,6 @@ public class UserService {
 
     @Autowired
     private UserValidation userValidation;
-
-    @Autowired
-    private CatalogRepository catalogRepository;
 
     @Autowired
     private CatalogValidation catalogValidation;
@@ -55,12 +48,12 @@ public class UserService {
 
         if (filterOptions.isEmpty()) {
             users = userRepository.findAllByActivePetsitterIsTrueOrderByRatingDesc();
-        } else if (serviceUtils.hasItems(filterOptions.getAnimals()) && serviceUtils.hasItems(filterOptions.getServices())) {
+        } else if (serviceUtils.hasItems(filterOptions.getAnimals()) && serviceUtils.hasItems(filterOptions.getPetServices())) {
             users = userRepository.findByFilterOptions(
                     Optional.ofNullable(filterOptions.getCity()).map(City::getName).orElse(null),
                     filterOptions.getRating(),
                     serviceUtils.getAnimalsAsString(filterOptions.getAnimals()),
-                    serviceUtils.getServicesAsString(filterOptions.getServices())
+                    serviceUtils.getServicesAsString(filterOptions.getPetServices())
             );
         } else if (serviceUtils.hasItems(filterOptions.getAnimals())) {
             users = userRepository.findByFilterOptionsWithAnimals(
@@ -68,11 +61,11 @@ public class UserService {
                     filterOptions.getRating(),
                     serviceUtils.getAnimalsAsString(filterOptions.getAnimals())
             );
-        } else if (serviceUtils.hasItems(filterOptions.getServices())){
+        } else if (serviceUtils.hasItems(filterOptions.getPetServices())){
             users = userRepository.findByFilterOptionsWithServices(
                     Optional.ofNullable(filterOptions.getCity()).map(City::getName).orElse(null),
                     filterOptions.getRating(),
-                    serviceUtils.getServicesAsString(filterOptions.getServices())
+                    serviceUtils.getServicesAsString(filterOptions.getPetServices())
             );
         } else {
             users = userRepository.findByFilterOptions(
@@ -88,14 +81,6 @@ public class UserService {
     public void updateUser(UserDto userDto) {
         userValidation.validateOnUpdate(userDto);
         catalogValidation.validateOnUpdate(userDto.getCatalogSet());
-        User user = userRepository.save(userMapper.toUser(userDto));
-        updateCatalog(user, userDto.getCatalogSet());
-    }
-
-    private void updateCatalog(User user, Set<CatalogDto> catalogDtos){
-        Set<Catalog> catalogs = catalogMapper.toCatalogSet(catalogDtos);
-        catalogs.forEach(item -> item.setPetsitter(user));
-        catalogRepository.deleteAllByPetsitter(user);
-        catalogRepository.saveAll(catalogs);
+        userRepository.save(userMapper.toUser(userDto));
     }
 }

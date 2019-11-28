@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -36,8 +37,8 @@ public class JobService {
         List<Job> jobs;
 
         if (filterOptions.isEmpty()) {
-            jobs = jobRepository.findAllByJobStatusEquals(filterOptions.getStatus());
-        } else if (serviceUtils.hasItems(filterOptions.getAnimals()) && serviceUtils.hasItems(filterOptions.getServices())) {
+            jobs = jobRepository.findAllByJobStatus(filterOptions.getStatus());
+        } else if (serviceUtils.hasItems(filterOptions.getAnimals()) && serviceUtils.hasItems(filterOptions.getPetServices())) {
             jobs = jobRepository.findByFilterOptions(
                     filterOptions.getStatus(),
                     Optional.ofNullable(filterOptions.getCity()).map(City::getName).orElse(null),
@@ -45,7 +46,7 @@ public class JobService {
                     filterOptions.getEndDate(),
                     filterOptions.getCreationDate(),
                     serviceUtils.getAnimalsAsString(filterOptions.getAnimals()),
-                    serviceUtils.getServicesAsString(filterOptions.getServices())
+                    serviceUtils.getServicesAsString(filterOptions.getPetServices())
             );
         } else if (serviceUtils.hasItems(filterOptions.getAnimals())) {
             jobs = jobRepository.findByFilterOptionsWithAnimals(
@@ -56,14 +57,14 @@ public class JobService {
                     filterOptions.getCreationDate(),
                     serviceUtils.getAnimalsAsString(filterOptions.getAnimals())
             );
-        } else if (serviceUtils.hasItems(filterOptions.getServices())){
-            jobs = jobRepository.findByFilterOptionsWithAnimals(
+        } else if (serviceUtils.hasItems(filterOptions.getPetServices())){
+            jobs = jobRepository.findByFilterOptionsWithServices(
                     filterOptions.getStatus(),
                     Optional.ofNullable(filterOptions.getCity()).map(City::getName).orElse(null),
                     filterOptions.getStartDate(),
                     filterOptions.getEndDate(),
                     filterOptions.getCreationDate(),
-                    serviceUtils.getServicesAsString(filterOptions.getServices())
+                    serviceUtils.getServicesAsString(filterOptions.getPetServices())
             );
         } else {
             jobs = jobRepository.findByFilterOptions(
@@ -98,6 +99,7 @@ public class JobService {
 
     @Transactional
     public void create(JobDto jobDto) {
+        jobDto.setCreationDate(LocalDate.now());
         jobValidation.validateOnCreate(jobDto);
         jobRepository.save(jobMapper.toJob(jobDto));
     }

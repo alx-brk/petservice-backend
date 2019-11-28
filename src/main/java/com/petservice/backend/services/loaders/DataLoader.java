@@ -35,12 +35,14 @@ public class DataLoader {
     @Autowired
     private JobRepository jobRepository;
 
-    @Autowired
-    private CatalogRepository catalogRepository;
-
     @Transactional
     @PostConstruct
     public void init() {
+        jobRepository.deleteAll();
+        userRepository.deleteAll();
+        animalRepository.deleteAll();
+        petServiceRepository.deleteAll();
+        cityRepository.deleteAll();
 
         for (String name : ANIMALS) {
             Animal animal = new Animal();
@@ -74,12 +76,10 @@ public class DataLoader {
 
         Catalog catalog1 = new Catalog();
         catalog1.setPetService(petServiceRepository.findByNameEquals("Выгул"));
-        catalog1.setPetsitter(user1);
         catalog1.setPrice(500);
         catalog1.setUnits(Units.RUB);
         user1.setCatalogSet(Collections.singleton(catalog1));
         user1 = userRepository.save(user1);
-        catalog1 = catalogRepository.save(catalog1);
 
         User user2 = new User();
         user2.setEmail("vasya@gmail.com");
@@ -95,12 +95,10 @@ public class DataLoader {
 
         Catalog catalog2 = new Catalog();
         catalog2.setPetService(petServiceRepository.findByNameEquals("Передержка"));
-        catalog2.setPetsitter(user2);
         catalog2.setPrice(600);
         catalog2.setUnits(Units.RUB_DAY);
         user2.setCatalogSet(Collections.singleton(catalog2));
         userRepository.save(user2);
-        catalog2 = catalogRepository.save(catalog2);
 
         Job job1 = new Job();
         job1.setClient(user1);

@@ -14,18 +14,21 @@ import java.util.Set;
 @Repository
 public interface JobRepository extends CrudRepository<Job, Long> {
 
-    List<Job> findAllByJobStatusEquals(JobStatus status);
+    @Query(value = "select job from Job job " +
+            "where (:status is null or job.jobStatus = :status) " +
+            "order by job.creationDate desc ")
+    List<Job> findAllByJobStatus(JobStatus status);
 
     @Query(value = "select  job.* from job " +
             "inner join city on job.city = city.id " +
-            "where job.job_status = :status " +
+            "where (:jobStatus is null or job.job_status = :jobStatus) " +
             "and (:city is null or city.name = :city) " +
             "and (:startDate is null or job.start_date >= :startDate) " +
             "and (:endDate is null or job.end_date <= :endDate) " +
             "and (:creationDate is null or job.creation_date >= :creationDate) " +
             "order by job.creation_date desc ",
             nativeQuery = true)
-    List<Job> findByFilterOptions(@Param(value = "status") JobStatus status,
+    List<Job> findByFilterOptions(@Param(value = "jobStatus") JobStatus jobStatus,
                                   @Param(value = "city") String city,
                                   @Param(value = "startDate") LocalDate startDate,
                                   @Param(value = "endDate") LocalDate endDate,
@@ -34,7 +37,7 @@ public interface JobRepository extends CrudRepository<Job, Long> {
     @Query(value = "select  job.* from job " +
             "inner join city on job.city = city.id " +
             "inner join job_animal ja on job.id = ja.job_id " +
-            "where job.job_status = :status " +
+            "where (:jobStatus is null or job.job_status = :jobStatus) " +
             "and (:city is null or city.name = :city) " +
             "and (:startDate is null or job.start_date >= :startDate) " +
             "and (:endDate is null or job.end_date <= :endDate) " +
@@ -42,7 +45,7 @@ public interface JobRepository extends CrudRepository<Job, Long> {
             "and ja.animal_id in (:animals) " +
             "order by job.creation_date desc ",
             nativeQuery = true)
-    List<Job> findByFilterOptionsWithAnimals(@Param(value = "status") JobStatus status,
+    List<Job> findByFilterOptionsWithAnimals(@Param(value = "jobStatus") JobStatus jobStatus,
                                              @Param(value = "city") String city,
                                              @Param(value = "startDate") LocalDate startDate,
                                              @Param(value = "endDate") LocalDate endDate,
@@ -52,7 +55,7 @@ public interface JobRepository extends CrudRepository<Job, Long> {
     @Query(value = "select  job.* from job " +
             "inner join city on job.city = city.id " +
             "inner join job_service js on job.id = js.job_id " +
-            "where job.job_status = :status " +
+            "where (:jobStatus is null or job.job_status = :jobStatus) " +
             "and (:city is null or city.name = :city) " +
             "and (:startDate is null or job.start_date >= :startDate) " +
             "and (:endDate is null or job.end_date <= :endDate) " +
@@ -60,7 +63,7 @@ public interface JobRepository extends CrudRepository<Job, Long> {
             "and js.pet_service_id in (:services) " +
             "order by job.creation_date desc ",
             nativeQuery = true)
-    List<Job> findByFilterOptionsWithServices(@Param(value = "status") JobStatus status,
+    List<Job> findByFilterOptionsWithServices(@Param(value = "jobStatus") JobStatus jobStatus,
                                               @Param(value = "city") String city,
                                               @Param(value = "startDate") LocalDate startDate,
                                               @Param(value = "endDate") LocalDate endDate,
@@ -71,7 +74,7 @@ public interface JobRepository extends CrudRepository<Job, Long> {
             "inner join city on job.city = city.id " +
             "inner join job_animal ja on job.id = ja.job_id " +
             "inner join job_service js on job.id = js.job_id " +
-            "where job.job_status = :status " +
+            "where (:jobStatus is null or job.job_status = :jobStatus) " +
             "and (:city is null or city.name = :city) " +
             "and (:startDate is null or job.start_date >= :startDate) " +
             "and (:endDate is null or job.end_date <= :endDate) " +
@@ -80,7 +83,7 @@ public interface JobRepository extends CrudRepository<Job, Long> {
             "and js.pet_service_id in (:services) " +
             "order by job.creation_date desc ",
             nativeQuery = true)
-    List<Job> findByFilterOptions(@Param(value = "status") JobStatus status,
+    List<Job> findByFilterOptions(@Param(value = "jobStatus") JobStatus jobStatus,
                                   @Param(value = "city") String city,
                                   @Param(value = "startDate") LocalDate startDate,
                                   @Param(value = "endDate") LocalDate endDate,

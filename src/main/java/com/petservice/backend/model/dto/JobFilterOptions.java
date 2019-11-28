@@ -15,7 +15,7 @@ import java.util.Set;
 public class JobFilterOptions {
     private City city;
     private Set<Animal> animals;
-    private Set<PetService> services;
+    private Set<PetService> petServices;
     private LocalDate startDate;
     private LocalDate endDate;
     private LocalDate creationDate;
@@ -24,7 +24,7 @@ public class JobFilterOptions {
     public boolean isEmpty() {
         if (city == null &&
                 (animals == null || animals.isEmpty()) &&
-                (services == null || services.isEmpty()) &&
+                (petServices == null || petServices.isEmpty()) &&
                 startDate == null &&
                 endDate == null &&
                 creationDate == null) {

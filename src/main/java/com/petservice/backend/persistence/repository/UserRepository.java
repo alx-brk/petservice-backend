@@ -42,11 +42,11 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
     @Query(value = "select user.* from user " +
             "inner join city on user.city_id = city.id " +
-            "inner join catalog on user.id = catalog.petsitter_id " +
+            "inner join user_catalog uc on user.id = uc.petsitter_id " +
             "where user.active_petsitter is true " +
             "and (:city is null or city.name = :city) " +
             "and (:rating is null or user.rating >= :rating) " +
-            "and catalog.pet_service_id in (:services) " +
+            "and uc.pet_servive_id in (:services) " +
             "order by user.rating desc ",
             nativeQuery = true)
     List<User> findByFilterOptionsWithServices(@Param(value = "city") String city,
@@ -56,12 +56,12 @@ public interface UserRepository extends CrudRepository<User, Long> {
     @Query(value = "select user.* from user " +
             "inner join city on user.city_id = city.id " +
             "inner join user_animal ua on ua.user_id = user.id " +
-            "inner join catalog on user.id = catalog.petsitter_id " +
+            "inner join user_catalog uc on user.id = uc.petsitter_id " +
             "where user.active_petsitter is true " +
             "and (:city is null or city.name = :city) " +
             "and (:rating is null or user.rating >= :rating) " +
             "and ua.animal_id in (:animals) " +
-            "and catalog.pet_service_id in (:services) " +
+            "and uc.pet_servive_id in (:services) " +
             "order by user.rating desc ",
             nativeQuery = true)
     List<User> findByFilterOptions(@Param(value = "city") String city,

@@ -49,7 +49,8 @@ public class User implements Serializable {
     )
     private Set<Animal> animals;
 
-    @OneToMany(mappedBy = "petsitter", fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "user_catalog", joinColumns = @JoinColumn(name = "petsitter_id"))
     private Set<Catalog> catalogSet;
 
     private String description;

@@ -26,6 +26,14 @@ public class JobValidation implements Validation<JobDto> {
                                 .object(entity)
                                 .message(CANNOT_BE_NULL_ERROR)
                                 .field("id").build()
+                )
+                .validateNotNull(
+                        JobDto::getPetsitter,
+                        ValidationException.builder()
+                                .entity(JobDto.class)
+                                .object(entity)
+                                .message(CANNOT_BE_NULL_ERROR)
+                                .field("petsitter").build()
                 );
 
         validateCommon(entity);
@@ -75,28 +83,12 @@ public class JobValidation implements Validation<JobDto> {
                                 .field("client").build()
                 )
                 .validateNotNull(
-                        JobDto::getPetsitter,
-                        ValidationException.builder()
-                                .entity(JobDto.class)
-                                .object(entity)
-                                .message(CANNOT_BE_NULL_ERROR)
-                                .field("petsitter").build()
-                )
-                .validateNotNull(
                         JobDto::getJobStatus,
                         ValidationException.builder()
                                 .entity(JobDto.class)
                                 .object(entity)
                                 .message(CANNOT_BE_NULL_ERROR)
                                 .field("jobStatus").build()
-                )
-                .validateNotNull(
-                        JobDto::getCreationDate,
-                        ValidationException.builder()
-                                .entity(JobDto.class)
-                                .object(entity)
-                                .message(CANNOT_BE_NULL_ERROR)
-                                .field("creationDate").build()
                 );
 
         validateDates(entity);
