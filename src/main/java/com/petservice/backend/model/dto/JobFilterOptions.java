@@ -19,7 +19,7 @@ public class JobFilterOptions {
     private LocalDate startDate;
     private LocalDate endDate;
     private LocalDate creationDate;
-    private JobStatus status;
+    private JobStatus jobStatus;
 
     public boolean isEmpty() {
         if (city == null &&

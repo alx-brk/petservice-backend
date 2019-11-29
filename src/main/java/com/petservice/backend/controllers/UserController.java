@@ -43,7 +43,7 @@ public class UserController {
     @PostMapping
     @ApiOperation(value = "create user")
     public ResponseEntity<HttpStatus> create(@RequestBody UserDto userDto) {
-        userService.updateUser(userDto);
+        userService.createUser(userDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

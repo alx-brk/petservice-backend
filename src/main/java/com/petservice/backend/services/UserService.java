@@ -2,10 +2,10 @@ package com.petservice.backend.services;
 
 import com.petservice.backend.model.dto.PetsitterFilterOptions;
 import com.petservice.backend.model.dto.UserDto;
-import com.petservice.backend.model.mappers.CatalogMapper;
 import com.petservice.backend.model.mappers.UserMapper;
-import com.petservice.backend.persistence.entity.*;
-import com.petservice.backend.persistence.repository.*;
+import com.petservice.backend.persistence.entity.City;
+import com.petservice.backend.persistence.entity.User;
+import com.petservice.backend.persistence.repository.UserRepository;
 import com.petservice.backend.services.common.ServiceUtils;
 import com.petservice.backend.services.validation.CatalogValidation;
 import com.petservice.backend.services.validation.UserValidation;
@@ -30,9 +30,6 @@ public class UserService {
 
     @Autowired
     private CatalogValidation catalogValidation;
-
-    @Autowired
-    private CatalogMapper catalogMapper;
 
     @Autowired
     private UserMapper userMapper;
@@ -81,6 +78,13 @@ public class UserService {
     public void updateUser(UserDto userDto) {
         userValidation.validateOnUpdate(userDto);
         catalogValidation.validateOnUpdate(userDto.getCatalogSet());
+        userRepository.save(userMapper.toUser(userDto));
+    }
+
+    @Transactional
+    public void createUser(UserDto userDto) {
+        userValidation.validateOnCreate(userDto);
+        catalogValidation.validateOnCreate(userDto.getCatalogSet());
         userRepository.save(userMapper.toUser(userDto));
     }
 }

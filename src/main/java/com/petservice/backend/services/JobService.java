@@ -5,6 +5,7 @@ import com.petservice.backend.model.dto.JobFilterOptions;
 import com.petservice.backend.model.mappers.JobMapper;
 import com.petservice.backend.persistence.entity.City;
 import com.petservice.backend.persistence.entity.Job;
+import com.petservice.backend.persistence.enums.JobStatus;
 import com.petservice.backend.persistence.enums.Units;
 import com.petservice.backend.persistence.repository.JobRepository;
 import com.petservice.backend.services.common.ServiceUtils;
@@ -37,10 +38,10 @@ public class JobService {
         List<Job> jobs;
 
         if (filterOptions.isEmpty()) {
-            jobs = jobRepository.findAllByJobStatus(filterOptions.getStatus());
+            jobs = jobRepository.findAllByJobStatus(filterOptions.getJobStatus());
         } else if (serviceUtils.hasItems(filterOptions.getAnimals()) && serviceUtils.hasItems(filterOptions.getPetServices())) {
             jobs = jobRepository.findByFilterOptions(
-                    filterOptions.getStatus(),
+                    filterOptions.getJobStatus(),
                     Optional.ofNullable(filterOptions.getCity()).map(City::getName).orElse(null),
                     filterOptions.getStartDate(),
                     filterOptions.getEndDate(),
@@ -50,7 +51,7 @@ public class JobService {
             );
         } else if (serviceUtils.hasItems(filterOptions.getAnimals())) {
             jobs = jobRepository.findByFilterOptionsWithAnimals(
-                    filterOptions.getStatus(),
+                    filterOptions.getJobStatus(),
                     Optional.ofNullable(filterOptions.getCity()).map(City::getName).orElse(null),
                     filterOptions.getStartDate(),
                     filterOptions.getEndDate(),
@@ -59,7 +60,7 @@ public class JobService {
             );
         } else if (serviceUtils.hasItems(filterOptions.getPetServices())){
             jobs = jobRepository.findByFilterOptionsWithServices(
-                    filterOptions.getStatus(),
+                    filterOptions.getJobStatus(),
                     Optional.ofNullable(filterOptions.getCity()).map(City::getName).orElse(null),
                     filterOptions.getStartDate(),
                     filterOptions.getEndDate(),
@@ -68,7 +69,7 @@ public class JobService {
             );
         } else {
             jobs = jobRepository.findByFilterOptions(
-                    filterOptions.getStatus(),
+                    filterOptions.getJobStatus(),
                     Optional.ofNullable(filterOptions.getCity()).map(City::getName).orElse(null),
                     filterOptions.getStartDate(),
                     filterOptions.getEndDate(),
@@ -106,5 +107,9 @@ public class JobService {
 
     public List<Units> getUnits(){
         return Arrays.asList(Units.values());
+    }
+
+    public List<JobStatus> getStatuses() {
+        return Arrays.asList(JobStatus.values());
     }
 }

@@ -10,25 +10,18 @@ import java.util.regex.Pattern;
 public class UserValidation implements Validation<UserDto> {
 
     private static final String CANNOT_BE_NULL_ERROR = "Cannot be null";
+    private static final String NOT_EMAIL_ERROR = "Not a valid email";
 
-    // TODO: change regex, add validation of email
-    private static final Pattern EMAIL_REGEX = Pattern.compile("^[\\w\\d.-]+@\\w+\\.\\w+");
+    private static final Pattern EMAIL_REGEX = Pattern.compile("^[\\w!#$%&’*+/=?`{|}~^-]+(?:\\.[\\w!#$%&’*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
 
     @Override
     public void validateOnCreate(UserDto entity) {
-        //TODO: implement
+        validateCommon(entity);
     }
 
     @Override
     public void validateOnUpdate(UserDto entity) {
         Validator.of(entity)
-                .validateNotNull(
-                        (e) -> e,
-                        ValidationException.builder()
-                                .entity(UserDto.class)
-                                .object(entity)
-                                .message(CANNOT_BE_NULL_ERROR).build()
-                )
                 .validateNotNull(
                         UserDto::getId,
                         ValidationException.builder()
@@ -36,6 +29,17 @@ public class UserValidation implements Validation<UserDto> {
                                 .object(entity)
                                 .message(CANNOT_BE_NULL_ERROR)
                                 .field("id").build()
+                );
+    }
+
+    private void validateCommon(UserDto entity) {
+        Validator.of(entity)
+                .validateNotNull(
+                        (e) -> e,
+                        ValidationException.builder()
+                                .entity(UserDto.class)
+                                .object(entity)
+                                .message(CANNOT_BE_NULL_ERROR).build()
                 )
                 .validateNotNull(
                         UserDto::getEmail,
@@ -68,6 +72,14 @@ public class UserValidation implements Validation<UserDto> {
                                 .object(entity)
                                 .message(CANNOT_BE_NULL_ERROR)
                                 .field("city").build()
+                ).validateCondition(
+                        UserDto::getEmail,
+                        e -> EMAIL_REGEX.matcher(e).matches(),
+                        ValidationException.builder()
+                                .entity(UserDto.class)
+                                .object(entity)
+                                .message(NOT_EMAIL_ERROR)
+                                .field("email").build()
                 );
     }
 }

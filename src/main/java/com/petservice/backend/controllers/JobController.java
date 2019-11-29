@@ -2,6 +2,7 @@ package com.petservice.backend.controllers;
 
 import com.petservice.backend.model.dto.JobDto;
 import com.petservice.backend.model.dto.JobFilterOptions;
+import com.petservice.backend.persistence.enums.JobStatus;
 import com.petservice.backend.persistence.enums.Units;
 import com.petservice.backend.services.JobService;
 import io.swagger.annotations.Api;
@@ -45,6 +46,12 @@ public class JobController {
     @ApiOperation(value = "get all units")
     public ResponseEntity<List<Units>> getUnits() {
         return new ResponseEntity<>(jobService.getUnits(), HttpStatus.OK);
+    }
+
+    @GetMapping("/statuses/all")
+    @ApiOperation(value = "get all job statuses")
+    public ResponseEntity<List<JobStatus>> getStatuses(){
+        return new ResponseEntity<>(jobService.getStatuses(), HttpStatus.OK);
     }
 
     @GetMapping("/client-orders")
