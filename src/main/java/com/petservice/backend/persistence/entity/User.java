@@ -3,6 +3,7 @@ package com.petservice.backend.persistence.entity;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.petservice.backend.persistence.enums.Role;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -23,6 +24,13 @@ public class User implements Serializable {
 
     @Column(nullable = false, length = 30)
     private String name;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "avatar")
@@ -66,6 +74,9 @@ public class User implements Serializable {
 
     @OneToMany(mappedBy = "petsitter", fetch = FetchType.LAZY)
     private Set<Job> petsitterJobs;
+
+    @Transient
+    private String token;
 
     @Override
     public boolean equals(Object o) {

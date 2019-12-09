@@ -1,5 +1,6 @@
 package com.petservice.backend.controllers;
 
+import com.petservice.backend.services.exceptions.AuthException;
 import com.petservice.backend.services.exceptions.FileUploadException;
 import com.petservice.backend.services.exceptions.NotFoundException;
 import com.petservice.backend.services.exceptions.ValidationException;
@@ -29,6 +30,12 @@ public class ExceptionHandlerController {
     public ResponseEntity<String> validationException(ValidationException exception) {
         log.debug(exception.toString(), exception);
         return new ResponseEntity<>(exception.toString(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = AuthException.class)
+    public ResponseEntity<String> validationException(AuthException exception) {
+        log.debug(exception.toString(), exception);
+        return new ResponseEntity<>(exception.toString(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = RuntimeException.class)

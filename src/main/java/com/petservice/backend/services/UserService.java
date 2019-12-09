@@ -5,11 +5,15 @@ import com.petservice.backend.model.dto.UserDto;
 import com.petservice.backend.model.mappers.UserMapper;
 import com.petservice.backend.persistence.entity.City;
 import com.petservice.backend.persistence.entity.User;
+import com.petservice.backend.persistence.enums.Role;
 import com.petservice.backend.persistence.repository.UserRepository;
 import com.petservice.backend.services.common.ServiceUtils;
+import com.petservice.backend.services.exceptions.AuthException;
 import com.petservice.backend.services.validation.CatalogValidation;
 import com.petservice.backend.services.validation.UserValidation;
+import com.petservice.backend.services.validation.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,10 +38,21 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public UserDto getOneByIdOrEmail(Long id, String email) {
-        return userMapper.toUserDto(
-                userRepository.findByIdEqualsOrEmailEquals(id, email)
-        );
+        User user = userRepository.findByIdEqualsOrEmailEquals(id, email);
+
+        if (user == null) {
+            throw AuthException.builder()
+                    .entity(String.class)
+                    .object(email)
+                    .message(ValidationUtils.NOT_REGISTERED_ERROR)
+                    .field("email")
+                    .build();
+        }
+        return userMapper.toUserDto(user);
     }
 
     public List<UserDto> getFilteredPetsittersList(PetsitterFilterOptions filterOptions) {
@@ -85,6 +100,8 @@ public class UserService {
     public void createUser(UserDto userDto) {
         userValidation.validateOnCreate(userDto);
         catalogValidation.validateOnCreate(userDto.getCatalogSet());
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        userDto.setRole(Role.USER);
         userRepository.save(userMapper.toUser(userDto));
     }
 }
