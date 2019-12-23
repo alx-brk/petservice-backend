@@ -97,11 +97,12 @@ public class UserService {
     }
 
     @Transactional
-    public void createUser(UserDto userDto) {
+    public UserDto createUser(UserDto userDto) {
         userValidation.validateOnCreate(userDto);
         catalogValidation.validateOnCreate(userDto.getCatalogSet());
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userDto.setRole(Role.USER);
-        userRepository.save(userMapper.toUser(userDto));
+        User user = userRepository.save(userMapper.toUser(userDto));
+        return userMapper.toUserDto(user);
     }
 }

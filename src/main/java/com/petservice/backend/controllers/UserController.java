@@ -48,9 +48,8 @@ public class UserController {
 
     @PostMapping
     @ApiOperation(value = "create user")
-    public ResponseEntity<HttpStatus> create(@RequestBody UserDto userDto) {
-        userService.createUser(userDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<UserDto> create(@RequestBody UserDto userDto) {
+        return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.OK);
     }
 
     @GetMapping("/login")
