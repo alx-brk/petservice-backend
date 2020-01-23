@@ -9,6 +9,7 @@ import com.petservice.backend.persistence.enums.Role;
 import com.petservice.backend.persistence.repository.UserRepository;
 import com.petservice.backend.services.common.ServiceUtils;
 import com.petservice.backend.services.exceptions.AuthException;
+import com.petservice.backend.services.exceptions.NotFoundException;
 import com.petservice.backend.services.validation.CatalogValidation;
 import com.petservice.backend.services.validation.UserValidation;
 import com.petservice.backend.services.validation.ValidationUtils;
@@ -45,11 +46,10 @@ public class UserService {
         User user = userRepository.findByIdEqualsOrEmailEquals(id, email);
 
         if (user == null) {
-            throw AuthException.builder()
+            throw NotFoundException.builder()
                     .entity(String.class)
                     .object(email)
                     .message(ValidationUtils.NOT_REGISTERED_ERROR)
-                    .field("email")
                     .build();
         }
         return userMapper.toUserDto(user);

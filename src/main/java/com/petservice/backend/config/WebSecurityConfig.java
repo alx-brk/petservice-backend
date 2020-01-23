@@ -50,12 +50,30 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/animal", "/animal/all", "/city", "/city/all", "/user", "/image/**", "/pet-service", "/pet-service/all", "/job/**", "/").permitAll()
-                .antMatchers("/job").hasRole(Role.USER.name())
+                .antMatchers(
+                        "/animal/all",
+                        "/city/all",
+                        "/feedback/all",
+                        "/user",
+                        "/user/search",
+                        "/image/**",
+                        "/pet-service/all",
+                        "/",
+                        "/job/search",
+                        "/job/units/all",
+                        "/job/units/all",
+                        "/job/statuses/all",
+                        "/user/login"
+                ).permitAll()
+                .antMatchers(
+                        "/job",
+                        "/job/client-orders",
+                        "/job/petsitter-orders"
+                ).hasRole(Role.USER.name())
                 .anyRequest().fullyAuthenticated()
                 .and()
                 .logout().permitAll()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout", "POST"))
+                .logoutRequestMatcher(new AntPathRequestMatcher("/user/login", "POST"))
                 .and()
                 .formLogin().loginPage("/user/login")
                 .and()

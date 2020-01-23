@@ -1,5 +1,6 @@
 package com.petservice.backend.config.jwt;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,11 +23,20 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        Authentication authentication = jwtTokenProvider.getAuthentication(request);
 
-        if (authentication != null && jwtTokenProvider.validateToken(request)) {
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            Authentication authentication = jwtTokenProvider.getAuthentication(request);
+
+            if (authentication != null && jwtTokenProvider.validateToken(request)) {
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+
+        } catch (ExpiredJwtException e){
+
+            response.setStatus(401);
+            return;
         }
+
         chain.doFilter(request, response);
     }
 }

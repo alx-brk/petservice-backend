@@ -26,13 +26,6 @@ public class UserController {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    @GetMapping
-    @ApiOperation(value = "get user")
-    public ResponseEntity<UserDto> getOne(@RequestParam(value = "id", required = false) Long id,
-                                          @RequestParam(value = "email", required = false) String email) {
-        return new ResponseEntity<>(userService.getOneByIdOrEmail(id, email), HttpStatus.OK);
-    }
-
     @PostMapping("/search")
     @ApiOperation(value = "get filtered list of petsitters")
     public ResponseEntity<List<UserDto>> getByFilterOptions(@RequestBody PetsitterFilterOptions petsitterFilterOptions) {
@@ -62,5 +55,7 @@ public class UserController {
         UserDto userDto = userService.getOneByIdOrEmail(null, authenticationToken.getName());
         userDto.setToken(jwtTokenProvider.generateToken(authenticationToken));
         return new ResponseEntity<>(userDto, HttpStatus.OK);
+
+
     }
 }

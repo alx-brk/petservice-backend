@@ -8,8 +8,6 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class AuthException extends RuntimeException {
-    private Class entity;
-    private Object object;
     private String message;
-    private String field;
+    private Throwable throwable;
 }
