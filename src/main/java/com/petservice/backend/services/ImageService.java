@@ -7,6 +7,7 @@ import com.petservice.backend.persistence.repository.ImageRepository;
 import com.petservice.backend.persistence.repository.UserRepository;
 import com.petservice.backend.services.exceptions.FileUploadException;
 import com.petservice.backend.services.exceptions.NotFoundException;
+import com.petservice.backend.services.validation.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,7 @@ public class ImageService {
             image = imageRepository.save(image);
             User user = userRepository.findById(userId).orElseThrow(() -> NotFoundException.builder()
                     .entity(User.class)
+                    .message(ValidationUtils.USER_NOT_FOUND)
                     .object(userId)
                     .build());
             

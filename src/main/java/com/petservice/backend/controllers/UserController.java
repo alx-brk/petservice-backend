@@ -1,6 +1,6 @@
 package com.petservice.backend.controllers;
 
-import com.petservice.backend.config.jwt.JwtTokenProvider;
+import com.petservice.backend.config.jwt.JwtTokenUtils;
 import com.petservice.backend.model.dto.PetsitterFilterOptions;
 import com.petservice.backend.model.dto.UserDto;
 import com.petservice.backend.services.UserService;
@@ -9,10 +9,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -24,7 +22,7 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    private JwtTokenUtils jwtTokenUtils;
 
     @PostMapping("/search")
     @ApiOperation(value = "get filtered list of petsitters")
@@ -45,17 +43,10 @@ public class UserController {
         return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.OK);
     }
 
-    @GetMapping("/login")
-    @ApiOperation(value = "login")
-    public ResponseEntity<?> login(Principal principal) {
-        if (principal == null) {
-            return ResponseEntity.ok(principal);
-        }
-        UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) principal;
-        UserDto userDto = userService.getOneByIdOrEmail(null, authenticationToken.getName());
-        userDto.setToken(jwtTokenProvider.generateToken(authenticationToken));
-        return new ResponseEntity<>(userDto, HttpStatus.OK);
-
-
+    @GetMapping
+    @ApiOperation(value = "get user profile information")
+    public ResponseEntity<UserDto> getProfile(@RequestParam Long id){
+        jwtTokenUtils.validateAccess(id);
+        return new ResponseEntity<>(userService.getById(id), HttpStatus.OK);
     }
 }

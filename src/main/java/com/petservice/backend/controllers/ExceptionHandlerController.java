@@ -1,25 +1,29 @@
 package com.petservice.backend.controllers;
 
-import com.petservice.backend.services.exceptions.AuthException;
-import com.petservice.backend.services.exceptions.FileUploadException;
-import com.petservice.backend.services.exceptions.NotFoundException;
-import com.petservice.backend.services.exceptions.ValidationException;
+import com.petservice.backend.services.exceptions.*;
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @Slf4j
 @RestControllerAdvice(annotations = RestController.class)
 public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(AuthException.class)
-    public ResponseEntity<String> handleAuthException(AuthException exception){
-        log.debug(exception.toString(), exception);
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<String> handleJwtException(JwtException exception){
+        log.debug(exception.getMessage(), exception);
         return new ResponseEntity<>(exception.toString(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<String> handleJwtException(ForbiddenException exception){
+        log.debug(exception.getMessage(), exception);
+        return new ResponseEntity<>(exception.toString(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(NotFoundException.class)
@@ -43,6 +47,6 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleRuntimeException(RuntimeException exception) {
         log.debug(exception.toString(), exception);
-        return new ResponseEntity<>("Don't panic!", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("Don't panic!\n" + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

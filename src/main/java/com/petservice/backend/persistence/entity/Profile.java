@@ -1,19 +1,18 @@
 package com.petservice.backend.persistence.entity;
 
-import com.petservice.backend.config.enums.UserRole;
+import com.google.common.base.Objects;
 import com.petservice.backend.persistence.enums.Role;
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Data
 @DynamicUpdate
-public class User implements Serializable {
+public class Profile implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,13 +23,6 @@ public class User implements Serializable {
 
     @Column(nullable = false, length = 30)
     private String name;
-
-    @Column(nullable = false)
-    private String password;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UserRole userRole;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "avatar")
@@ -78,16 +70,16 @@ public class User implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User)) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id) &&
-                email.equals(user.email) &&
-                Objects.equals(name, user.name) &&
-                Objects.equals(phone, user.phone);
+        if (o == null || getClass() != o.getClass()) return false;
+        Profile profile = (Profile) o;
+        return Objects.equal(id, profile.id) &&
+                Objects.equal(email, profile.email) &&
+                Objects.equal(name, profile.name) &&
+                Objects.equal(phone, profile.phone);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, name, phone);
+        return Objects.hashCode(id, email, name, phone);
     }
 }

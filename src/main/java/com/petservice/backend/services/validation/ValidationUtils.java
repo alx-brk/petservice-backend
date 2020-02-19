@@ -8,5 +8,7 @@ public class ValidationUtils {
     public static final String NOT_EMAIL_ERROR = "Not a valid email";
     public static final String DUPLICATE_ERROR = "Such entity already exists";
     public static final String NOT_REGISTERED_ERROR = "Email not registered";
+    public static final String USER_NOT_FOUND = "User not found";
+    public static final String FORBIDDEN = "Access is forbidden";
 
 }

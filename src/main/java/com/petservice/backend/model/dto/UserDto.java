@@ -1,5 +1,6 @@
 package com.petservice.backend.model.dto;
 
+import com.petservice.backend.config.enums.UserRole;
 import com.petservice.backend.persistence.enums.Role;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,7 +14,7 @@ public class UserDto {
     private String email;
     private String name;
     private String password;
-    private Role role;
+    private UserRole userRole;
     private ImageDto avatar;
     private Double rating;
     private String phone;
@@ -22,5 +23,4 @@ public class UserDto {
     private Set<AnimalDto> animals;
     private Set<CatalogDto> catalogSet;
     private String description;
-    private String token;
 }

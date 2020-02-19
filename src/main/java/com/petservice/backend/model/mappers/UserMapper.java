@@ -18,8 +18,7 @@ public interface UserMapper {
 
     @Mappings({
             @Mapping(target = "avatar.picture", ignore = true),
-            @Mapping(target = "password", ignore = true),
-            @Mapping(target = "role", ignore = true)
+            @Mapping(target = "password", ignore = true)
     })
     UserDto toUserDto(User user);
 

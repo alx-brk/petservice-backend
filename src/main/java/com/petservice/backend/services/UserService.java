@@ -1,14 +1,13 @@
 package com.petservice.backend.services;
 
+import com.petservice.backend.config.enums.UserRole;
 import com.petservice.backend.model.dto.PetsitterFilterOptions;
 import com.petservice.backend.model.dto.UserDto;
 import com.petservice.backend.model.mappers.UserMapper;
 import com.petservice.backend.persistence.entity.City;
 import com.petservice.backend.persistence.entity.User;
-import com.petservice.backend.persistence.enums.Role;
 import com.petservice.backend.persistence.repository.UserRepository;
 import com.petservice.backend.services.common.ServiceUtils;
-import com.petservice.backend.services.exceptions.AuthException;
 import com.petservice.backend.services.exceptions.NotFoundException;
 import com.petservice.backend.services.validation.CatalogValidation;
 import com.petservice.backend.services.validation.UserValidation;
@@ -42,16 +41,12 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public UserDto getOneByIdOrEmail(Long id, String email) {
-        User user = userRepository.findByIdEqualsOrEmailEquals(id, email);
+    public UserDto getById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> NotFoundException.builder()
+                .message(ValidationUtils.USER_NOT_FOUND)
+                .build());
 
-        if (user == null) {
-            throw NotFoundException.builder()
-                    .entity(String.class)
-                    .object(email)
-                    .message(ValidationUtils.NOT_REGISTERED_ERROR)
-                    .build();
-        }
         return userMapper.toUserDto(user);
     }
 
@@ -93,7 +88,19 @@ public class UserService {
     public void updateUser(UserDto userDto) {
         userValidation.validateOnUpdate(userDto);
         catalogValidation.validateOnUpdate(userDto.getCatalogSet());
-        userRepository.save(userMapper.toUser(userDto));
+
+        User newState = userMapper.toUser(userDto);
+
+        User currentState = userRepository.findById(userDto.getId()).orElseThrow(() -> NotFoundException.builder()
+                .entity(User.class)
+                .object(userDto.getId())
+                .build());
+
+        newState.setPassword(currentState.getPassword());
+        newState.setUserRole(currentState.getUserRole());
+        newState.setAvatar(currentState.getAvatar());
+
+        userRepository.save(newState);
     }
 
     @Transactional
@@ -101,7 +108,7 @@ public class UserService {
         userValidation.validateOnCreate(userDto);
         catalogValidation.validateOnCreate(userDto.getCatalogSet());
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        userDto.setRole(Role.USER);
+        userDto.setUserRole(UserRole.USER_ROLE);
         User user = userRepository.save(userMapper.toUser(userDto));
         return userMapper.toUserDto(user);
     }

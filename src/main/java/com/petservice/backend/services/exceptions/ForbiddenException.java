@@ -1,13 +1,12 @@
 package com.petservice.backend.services.exceptions;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-@Builder
+@AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class AuthException extends RuntimeException {
+public class ForbiddenException extends RuntimeException {
     private String message;
-    private Throwable throwable;
 }
