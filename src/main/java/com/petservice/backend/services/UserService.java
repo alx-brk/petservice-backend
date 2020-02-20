@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -87,7 +89,11 @@ public class UserService {
     @Transactional
     public void updateUser(UserDto userDto) {
         userValidation.validateOnUpdate(userDto);
-        catalogValidation.validateOnUpdate(userDto.getCatalogSet());
+        catalogValidation.validateOnUpdate(
+                Optional.of(userDto)
+                        .map(UserDto::getCatalogSet)
+                        .orElse(new HashSet<>())
+        );
 
         User newState = userMapper.toUser(userDto);
 

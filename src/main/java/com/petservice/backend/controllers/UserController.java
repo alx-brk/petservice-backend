@@ -33,6 +33,7 @@ public class UserController {
     @PutMapping
     @ApiOperation(value = "update user")
     public ResponseEntity<HttpStatus> updateUser(@RequestBody UserDto userDto) {
+        jwtTokenUtils.validateAccess(userDto.getId());
         userService.updateUser(userDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
