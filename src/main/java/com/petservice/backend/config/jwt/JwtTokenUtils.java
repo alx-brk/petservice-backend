@@ -1,6 +1,7 @@
 package com.petservice.backend.config.jwt;
 
 
+import com.petservice.backend.model.dto.UserDetailsImpl;
 import com.petservice.backend.persistence.entity.User;
 import com.petservice.backend.persistence.repository.UserRepository;
 import com.petservice.backend.services.exceptions.ForbiddenException;
@@ -11,18 +12,17 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -79,11 +79,12 @@ public class JwtTokenUtils implements Serializable {
     }
 
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetailsImpl userDetails) {
 
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .claim("authorities", userDetails.getAuthorities())
+                .claim("id", userDetails.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(tokenExpiration)))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
@@ -92,11 +93,16 @@ public class JwtTokenUtils implements Serializable {
     }
 
     public Set<GrantedAuthority> getGrantedAuthorities(String token){
-        List<Map<String, String>> authorities = (List<Map<String, String>>)getClaimFromToken(token, claims1 -> claims1.get("authorities"));
+        List<Map<String, String>> authorities = (List<Map<String, String>>)getClaimFromToken(token, claims -> claims.get("authorities"));
 
         return authorities.stream()
                 .map(item -> new SimpleGrantedAuthority(item.get("authority")))
                 .collect(Collectors.toSet());
+    }
+
+    public Long getUserId(String token){
+        String id = getClaimFromToken(token, claims -> claims.get("id")).toString();
+        return Long.valueOf(id) ;
     }
 
 
@@ -108,9 +114,26 @@ public class JwtTokenUtils implements Serializable {
                 .object(userId)
                 .build());
 
-        if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(user.getEmail())){
-            throw new ForbiddenException(ValidationUtils.FORBIDDEN);
+        if (SecurityContextHolder.getContext().getAuthentication() != null){
+            if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(user.getEmail())) {
+                throw new ForbiddenException(ValidationUtils.FORBIDDEN);
+            }
         }
+    }
+
+
+    public void validateToken(String token) {
+
+        if (isTokenExpired(token)){
+            throw new ForbiddenException(ValidationUtils.EXPIRED);
+        }
+
+        Long id = getUserId(token);
+
+        if (id != null){
+            validateAccess(id);
+        }
+
     }
 
 }

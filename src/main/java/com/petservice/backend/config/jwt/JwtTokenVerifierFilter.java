@@ -39,16 +39,19 @@ public class JwtTokenVerifierFilter extends OncePerRequestFilter {
             return;
         }
 
-
         String token = authHeader.replace(prefix, "").trim();
 
         String userName = jwtTokenUtils.getUsernameFromToken(token);
-        Set<GrantedAuthority> simpleGrantedAuthorities = jwtTokenUtils.getGrantedAuthorities(token);
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userName, null, simpleGrantedAuthorities);
+        if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            jwtTokenUtils.validateToken(token);
+            Set<GrantedAuthority> simpleGrantedAuthorities = jwtTokenUtils.getGrantedAuthorities(token);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(userName, null, simpleGrantedAuthorities);
 
-        filterChain.doFilter(httpServletRequest, httpServletResponse );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 }

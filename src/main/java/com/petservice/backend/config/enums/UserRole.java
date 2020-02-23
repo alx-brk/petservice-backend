@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import static com.petservice.backend.config.enums.UserPermission.*;
 
 public enum UserRole {
-    USER_ROLE(Sets.newHashSet(IMAGE_WRITE, JOB_READ, JOB_WRITE, PROFILE_WRITE));
+    USER(Sets.newHashSet(IMAGE_WRITE, JOB_READ, JOB_WRITE, PROFILE_WRITE));
 
     private final Set<UserPermission> permissions;
 

@@ -5,6 +5,7 @@ import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -24,6 +25,12 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
     public ResponseEntity<String> handleJwtException(ForbiddenException exception){
         log.debug(exception.getMessage(), exception);
         return new ResponseEntity<>(exception.toString(), HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<String> handleBadCredentialsException(BadCredentialsException exception){
+        log.debug(exception.getMessage(), exception);
+        return new ResponseEntity<>(exception.toString(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(NotFoundException.class)

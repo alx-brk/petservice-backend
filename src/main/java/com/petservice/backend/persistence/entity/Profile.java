@@ -1,7 +1,6 @@
 package com.petservice.backend.persistence.entity;
 
 import com.google.common.base.Objects;
-import com.petservice.backend.persistence.enums.Role;
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 

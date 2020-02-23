@@ -20,8 +20,6 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.Arrays;
-
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -96,7 +94,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/job",
                         "/job/client-orders",
                         "/job/petsitter-orders"
-                ).hasRole(UserRole.USER_ROLE.name())
+                ).hasRole(UserRole.USER.name())
                 .anyRequest().authenticated()
                     .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPointBean());

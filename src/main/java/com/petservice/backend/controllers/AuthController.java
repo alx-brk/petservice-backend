@@ -2,6 +2,7 @@ package com.petservice.backend.controllers;
 
 
 import com.petservice.backend.config.jwt.JwtTokenUtils;
+import com.petservice.backend.model.dto.UserDetailsImpl;
 import com.petservice.backend.model.jwt.JwtRequest;
 import com.petservice.backend.model.jwt.JwtResponse;
 import com.petservice.backend.services.JwtUserDetailsService;
@@ -37,7 +38,7 @@ public class AuthController {
 
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
-        final UserDetails userDetails = jwtUserDetailsService
+        final UserDetailsImpl userDetails = (UserDetailsImpl) jwtUserDetailsService
 
                 .loadUserByUsername(authenticationRequest.getUsername());
 

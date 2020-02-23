@@ -1,5 +1,6 @@
 package com.petservice.backend.services;
 
+import com.petservice.backend.model.dto.UserDetailsImpl;
 import com.petservice.backend.persistence.entity.User;
 import com.petservice.backend.persistence.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,13 @@ public class JwtUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
-                user.getUserRole().getGrantedAuthorities());
+
+        return new UserDetailsImpl(
+                user.getId(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getUserRole().getGrantedAuthorities()
+        );
     }
 
 }

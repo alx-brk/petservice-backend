@@ -1,7 +1,6 @@
 package com.petservice.backend.persistence.entity;
 
 import com.petservice.backend.config.enums.UserRole;
-import com.petservice.backend.persistence.enums.Role;
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 

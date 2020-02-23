@@ -17,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -114,7 +113,7 @@ public class UserService {
         userValidation.validateOnCreate(userDto);
         catalogValidation.validateOnCreate(userDto.getCatalogSet());
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        userDto.setUserRole(UserRole.USER_ROLE);
+        userDto.setUserRole(UserRole.USER);
         User user = userRepository.save(userMapper.toUser(userDto));
         return userMapper.toUserDto(user);
     }

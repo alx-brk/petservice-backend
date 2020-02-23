@@ -3,7 +3,6 @@ package com.petservice.backend.services.loaders;
 import com.petservice.backend.config.enums.UserRole;
 import com.petservice.backend.persistence.entity.*;
 import com.petservice.backend.persistence.enums.JobStatus;
-import com.petservice.backend.persistence.enums.Role;
 import com.petservice.backend.persistence.enums.Units;
 import com.petservice.backend.persistence.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +72,7 @@ public class DataLoader {
         user1.setName("Маша Пупкина");
         user1.setPhone("+79047389265");
         user1.setActivePetsitter(true);
-        user1.setUserRole(UserRole.USER_ROLE);
+        user1.setUserRole(UserRole.USER);
         user1.setPassword(passwordEncoder.encode("jopa"));
 
         City city1 = cityRepository.findByNameEquals("Санкт-Петербург");
@@ -94,7 +93,7 @@ public class DataLoader {
         user2.setName("Вася");
         user2.setPhone("+79048382399");
         user2.setActivePetsitter(false);
-        user2.setUserRole(UserRole.USER_ROLE);
+        user2.setUserRole(UserRole.USER);
         user2.setPassword(passwordEncoder.encode("jopa"));
 
         City city2 = cityRepository.findByNameEquals("Санкт-Петербург");

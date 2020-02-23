@@ -1,7 +1,6 @@
 package com.petservice.backend.model.dto;
 
 import com.petservice.backend.config.enums.UserRole;
-import com.petservice.backend.persistence.enums.Role;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
