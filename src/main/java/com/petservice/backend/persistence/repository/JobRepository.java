@@ -15,9 +15,9 @@ import java.util.Set;
 public interface JobRepository extends CrudRepository<Job, Long> {
 
     @Query(value = "select job from Job job " +
-            "where (:status is null or job.jobStatus = :status) " +
+            "where (:jobStatus is null or job.jobStatus = :jobStatus) " +
             "order by job.creationDate desc ")
-    List<Job> findAllByJobStatus(JobStatus status);
+    List<Job> findAllByJobStatus(@Param(value = "jobStatus") JobStatus jobStatus);
 
     @Query(value = "select  job.* from job " +
             "inner join city on job.city = city.id " +

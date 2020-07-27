@@ -4,12 +4,10 @@ import com.petservice.backend.model.dto.JobDto;
 import com.petservice.backend.services.exceptions.ValidationException;
 import org.springframework.stereotype.Component;
 
+import static com.petservice.backend.services.validation.ValidationUtils.*;
+
 @Component
 public class JobValidation implements Validation<JobDto> {
-
-    private static final String CANNOT_BE_NULL_ERROR = "Cannot be null";
-    private static final String START_DATE_ERROR = "Start date cannot be before creation date";
-    private static final String END_DATE_ERROR = "End date cannot be before start date";
 
     @Override
     public void validateOnCreate(JobDto entity) {

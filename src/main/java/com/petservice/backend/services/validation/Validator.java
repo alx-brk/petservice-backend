@@ -8,7 +8,7 @@ public class Validator<T> {
     private T entity;
     private String entityName;
 
-    public Validator(T entity) {
+    private Validator(T entity) {
         this.entity = Objects.requireNonNull(entity);
         this.entityName = entity.getClass().getSimpleName();
     }

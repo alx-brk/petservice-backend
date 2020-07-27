@@ -1,5 +1,6 @@
 package com.petservice.backend.controllers;
 
+import com.petservice.backend.config.jwt.JwtTokenUtils;
 import com.petservice.backend.model.dto.PetsitterFilterOptions;
 import com.petservice.backend.model.dto.UserDto;
 import com.petservice.backend.services.UserService;
@@ -20,12 +21,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    @ApiOperation(value = "get user")
-    public ResponseEntity<UserDto> getOne(@RequestParam(value = "id", required = false) Long id,
-                                          @RequestParam(value = "email", required = false) String email) {
-        return new ResponseEntity<>(userService.getOneByIdOrEmail(id, email), HttpStatus.OK);
-    }
+    @Autowired
+    private JwtTokenUtils jwtTokenUtils;
 
     @PostMapping("/search")
     @ApiOperation(value = "get filtered list of petsitters")
@@ -36,14 +33,21 @@ public class UserController {
     @PutMapping
     @ApiOperation(value = "update user")
     public ResponseEntity<HttpStatus> updateUser(@RequestBody UserDto userDto) {
+        jwtTokenUtils.validateAccess(userDto.getId());
         userService.updateUser(userDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping
     @ApiOperation(value = "create user")
-    public ResponseEntity<HttpStatus> create(@RequestBody UserDto userDto) {
-        userService.createUser(userDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<UserDto> create(@RequestBody UserDto userDto) {
+        return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.OK);
+    }
+
+    @GetMapping
+    @ApiOperation(value = "get user profile information")
+    public ResponseEntity<UserDto> getProfile(@RequestParam Long id){
+        jwtTokenUtils.validateAccess(id);
+        return new ResponseEntity<>(userService.getById(id), HttpStatus.OK);
     }
 }

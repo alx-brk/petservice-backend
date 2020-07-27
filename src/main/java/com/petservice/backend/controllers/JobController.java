@@ -1,5 +1,6 @@
 package com.petservice.backend.controllers;
 
+import com.petservice.backend.config.jwt.JwtTokenUtils;
 import com.petservice.backend.model.dto.JobDto;
 import com.petservice.backend.model.dto.JobFilterOptions;
 import com.petservice.backend.persistence.enums.JobStatus;
@@ -21,6 +22,9 @@ public class JobController {
 
     @Autowired
     private JobService jobService;
+
+    @Autowired
+    private JwtTokenUtils jwtTokenUtils;
 
     @PostMapping(value = "/search")
     @ApiOperation(value = "get jobs by filter options")
@@ -57,12 +61,14 @@ public class JobController {
     @GetMapping("/client-orders")
     @ApiOperation(value = "get all client orders")
     public ResponseEntity<List<JobDto>> getClientJobs(@RequestParam(value = "id") Long id) {
+        jwtTokenUtils.validateAccess(id);
         return new ResponseEntity<>(jobService.getClientJobs(id), HttpStatus.OK);
     }
 
     @GetMapping("/petsitter-orders")
     @ApiOperation(value = "get all petsitter orders")
     public ResponseEntity<List<JobDto>> getPetsitterJobs(@RequestParam(value = "id") Long id) {
+        jwtTokenUtils.validateAccess(id);
         return new ResponseEntity<>(jobService.getPetsitterJobs(id), HttpStatus.OK);
     }
 }
